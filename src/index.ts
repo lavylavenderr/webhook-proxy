@@ -18,7 +18,7 @@ import { robloxRanges } from "./robloxRanges";
 
 import "express-async-errors";
 import "./queueProcessor";
-import { getRabbitMq } from "./queueProcessor";
+import { getRabbitMq, rabbitReady } from "./queueProcessor";
 
 const VERSION = (() => {
   const rev = fs.readFileSync(".git/HEAD").toString().trim();
@@ -999,7 +999,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(config.port, async () => {
-  log("Up and running. Version:", VERSION);
+  await rabbitReady;
+  rabbitMq = getRabbitMq();
 
   setInterval(() => {
     log(
@@ -1010,5 +1011,5 @@ app.listen(config.port, async () => {
     requestsHandled = 0;
   }, 60000);
 
-  rabbitMq = getRabbitMq();
+  log("Up and running. Version:", VERSION);
 });
