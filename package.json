@@ -1,7 +1,7 @@
 {
     "scripts": {
         "update": "git pull && yarn && yarn build && pm2 reload webhook-proxy webhook-proxy-processor || true",
-        "build": "prisma migrate deploy && prisma generate && rimraf dist && tsc",
+        "build": "prisma migrate deploy && prisma generate && rimraf dist && tsc --skipLibCheck",
         "start": "yarn build && node dist"
     },
     "dependencies": {
@@ -26,6 +26,6 @@
         "@types/rate-limit-redis": "^1.7.2",
         "prisma": "^3.14.0",
         "rimraf": "^3.0.2",
-        "typescript": "^4.4.3"
+        "typescript": "^5.8.3"
     }
 }

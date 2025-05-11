@@ -1,7 +1,6 @@
 import amqp from 'amqplib';
 import axios, { AxiosResponse } from 'axios';
 import Redis from 'ioredis';
-
 import fs from 'fs';
 
 import beforeShutdown from './beforeShutdown';
@@ -34,54 +33,73 @@ async function run() {
             await rabbitMq.close();
         });
 
-        log('RabbitMQ set up.');
+        log('RabbitMQ channel set up.');
     } catch (e) {
         error('RabbitMQ init error:', e);
         process.exit(-1);
     }
 
-    log('Consuming.');
+    log('Starting consumer...');
     await rabbitMq.prefetch(10);
+
     await rabbitMq.consume(
         config.queue.queue,
         async msg => {
-            const data = JSON.parse(msg.content.toString());
+            if (!msg) return;
 
-            // since the actual proxy sets this key, this is a more reliable way of checking the ratelimit
-            if (parseInt(await redis.get(`webhookRatelimit:${data.id}`)) === 0) {
-                // mark message as dead, will be requeued via DLX
-                return rabbitMq.reject(msg);
-            }
-
-            let response: AxiosResponse<any>;
+            let data: any;
 
             try {
-                response = await client.post(
+                data = JSON.parse(msg.content.toString());
+                log('📨 Received message for webhook ID:', data.id);
+            } catch (e) {
+                error('❌ Failed to parse message:', e);
+                return rabbitMq.reject(msg, false);
+            }
+
+            try {
+                const ratelimit = await redis.get(`webhookRatelimit:${data.id}`);
+                const parsedLimit = parseInt(ratelimit ?? '1');
+
+                if (parsedLimit === 0) {
+                    warn(`⏳ Rate limit active for webhook ${data.id}, requeuing...`);
+                    return rabbitMq.reject(msg, false);
+                }
+            } catch (e) {
+                error(`❌ Failed Redis check for webhook ${data.id}:`, e);
+                return rabbitMq.reject(msg, true);
+            }
+
+            try {
+                const response: AxiosResponse = await client.post(
                     `http://localhost:${config.port}/api/webhooks/${data.id}/${data.token}?wait=false${
                         data.threadId ? '&thread_id=' + data.threadId : ''
                     }`,
                     data.body,
                     {
                         headers: {
-                            'User-Agent':
-                                'WebhookProxy-QueueProcessor/1.0 (https://github.com/lewisakura/webhook-proxy)',
+                            'User-Agent': 'WebhookProxy-QueueProcessor/1.0 (https://github.com/lewisakura/webhook-proxy)',
                             'Content-Type': 'application/json'
                         }
                     }
                 );
+
+                if (response.status === 429) {
+                    warn(`Webhook ${data.id} hit a rate limit, requeuing`);
+                    return rabbitMq.reject(msg, false);
+                }
+
+                if (response.status >= 400 && response.status < 500) {
+                    warn(`Webhook ${data.id} responded with ${response.status} (bad request)`);
+                } else {
+                    log(`Webhook ${data.id} processed successfully`);
+                }
+
+                rabbitMq.ack(msg);
             } catch (e) {
-                error('Failed to submit webhook to self:', e);
-                return rabbitMq.reject(msg);
+                error(`Error sending webhook ${data.id}:`, e);
+                rabbitMq.reject(msg, true);
             }
-
-            // can be ratelimited due to concurrency (e.g., sending webhooks manually + queueing)
-            if (response.status === 429) return rabbitMq.reject(msg); // die if ratelimited
-
-            if (response.status >= 400 && response.status < 500) {
-                warn(data.id, 'made a bad request');
-            }
-
-            rabbitMq.ack(msg);
         },
         { noAck: false }
     );
