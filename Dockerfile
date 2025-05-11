@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:22-slim
 
 WORKDIR /app
 
@@ -7,4 +7,6 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
-CMD ["yarn", "start"]
+RUN yarn build
+
+CMD ["node", "dist"]
