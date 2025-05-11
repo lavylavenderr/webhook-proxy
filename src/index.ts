@@ -18,6 +18,7 @@ import { robloxRanges } from "./robloxRanges";
 
 import "express-async-errors";
 import "./queueProcessor";
+import { getRabbitMq } from "./queueProcessor";
 
 const VERSION = (() => {
   const rev = fs.readFileSync(".git/HEAD").toString().trim();
@@ -1008,4 +1009,6 @@ app.listen(config.port, async () => {
     );
     requestsHandled = 0;
   }, 60000);
+
+  rabbitMq = getRabbitMq();
 });
