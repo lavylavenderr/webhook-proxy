@@ -1,7 +1,7 @@
-FROM node:22-slim
+FROM node:20-bullseye
 
 RUN apt-get update && apt-get install -y \
-  openssl libssl1.1 ca-certificates \
+  libssl1.1 openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -13,4 +13,5 @@ COPY . .
 
 RUN yarn build
 
+EXPOSE 4000
 CMD ["node", "dist"]
