@@ -1,0 +1,26 @@
+services:
+  webhook-proxy:
+    container_name: webhook-proxy
+    image: registry.stackowoflow.com/canary/webhook-proxy:latest
+    restart: unless-stopped
+    depends_on:
+      dragonfly:
+        condition: service_healthy
+    env_file:
+      - stack.env
+
+  dragonfly:
+    container_name: webhook-proxy-cache
+    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    ulimits:
+      memlock: -1
+    volumes:
+      - dragonflydata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      
+volumes:
+  dragonflydata:
