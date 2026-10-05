@@ -1,0 +1,26 @@
+// use prisma-8
+model BannedWebhook {
+  _id    ObjectId @id @map("_id")
+  id     String   @unique
+
+  reason String
+
+  @@map("bannedwebhooks")
+}
+
+model BannedIP {
+  _id     ObjectId @id @map("_id")
+  id      String   @unique
+
+  reason  String
+  expires Date
+
+  @@map("bannedips")
+}
+
+model WebhooksSeen {
+  _id ObjectId @id @map("_id")
+  id  String   @unique
+
+  @@map("seenwebhooks")
+}

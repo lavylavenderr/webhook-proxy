@@ -1,0 +1,152 @@
+[
+  {
+    "id": "collection.bannedips.create",
+    "label": "Create collection bannedips",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "collection bannedips does not exist",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "bannedips"
+        },
+        "expect": "notExists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "create collection bannedips",
+        "command": {
+          "kind": "createCollection",
+          "collection": "bannedips",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "expires": {
+                  "bsonType": "date"
+                },
+                "reason": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "expires",
+                "reason"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "collection.bannedwebhooks.create",
+    "label": "Create collection bannedwebhooks",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "collection bannedwebhooks does not exist",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "bannedwebhooks"
+        },
+        "expect": "notExists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "create collection bannedwebhooks",
+        "command": {
+          "kind": "createCollection",
+          "collection": "bannedwebhooks",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "reason": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "reason"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "collection.seenwebhooks.create",
+    "label": "Create collection seenwebhooks",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "collection seenwebhooks does not exist",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "seenwebhooks"
+        },
+        "expect": "notExists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "create collection seenwebhooks",
+        "command": {
+          "kind": "createCollection",
+          "collection": "seenwebhooks",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                }
+              },
+              "required": [
+                "_id"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": []
+  }
+]

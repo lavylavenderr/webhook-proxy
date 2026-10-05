@@ -1,22 +1,14 @@
 import amqp from "amqplib";
-import axios, { AxiosResponse } from "axios";
+import axios, { type AxiosResponse } from "axios";
 import Redis from "ioredis";
 import fs from "fs";
 
 import beforeShutdown from "./beforeShutdown";
 import { error, log, warn } from "./log";
 import { setup } from "./rmq";
+import { fetchApplicationConfig } from "./config";
 
-const config = JSON.parse(fs.readFileSync("./config.json", "utf8")) as {
-  port: number;
-  queue: {
-    enabled: boolean;
-    rabbitmq: string;
-    queue: string;
-  };
-  redis: string;
-};
-
+const config = await fetchApplicationConfig();
 const redis = new Redis(config.redis);
 
 const client = axios.create({
