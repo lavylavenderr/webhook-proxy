@@ -536,7 +536,7 @@ async function postRequestChecks(
     response.status === 401 &&
     response.data.code === 50027 /* invalid webhook token */
   ) {
-    await trackInvalidWebhookToken(req.ip ?? "127.0.0.1");
+    await trackInvalidWebhookToken(req.clientIp);
 
     res.status(401).json({
       proxy: true,
