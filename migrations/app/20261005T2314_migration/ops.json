@@ -1,0 +1,539 @@
+[
+  {
+    "id": "index.bannedips.create(reference:1)",
+    "label": "Create index on bannedips (reference:1)",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "index does not already exist on bannedips",
+        "source": {
+          "kind": "listIndexes",
+          "collection": "bannedips"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "key",
+          "op": "$eq",
+          "value": {
+            "reference": 1
+          }
+        },
+        "expect": "notExists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index on bannedips",
+        "command": {
+          "kind": "createIndex",
+          "collection": "bannedips",
+          "keys": [
+            {
+              "direction": 1,
+              "field": "reference"
+            }
+          ],
+          "unique": true,
+          "name": "reference_1"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "index exists on bannedips",
+        "source": {
+          "kind": "listIndexes",
+          "collection": "bannedips"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "key",
+              "op": "$eq",
+              "value": {
+                "reference": 1
+              }
+            },
+            {
+              "kind": "field",
+              "field": "unique",
+              "op": "$eq",
+              "value": true
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  },
+  {
+    "id": "index.bannedwebhooks.create(reference:1)",
+    "label": "Create index on bannedwebhooks (reference:1)",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "index does not already exist on bannedwebhooks",
+        "source": {
+          "kind": "listIndexes",
+          "collection": "bannedwebhooks"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "key",
+          "op": "$eq",
+          "value": {
+            "reference": 1
+          }
+        },
+        "expect": "notExists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index on bannedwebhooks",
+        "command": {
+          "kind": "createIndex",
+          "collection": "bannedwebhooks",
+          "keys": [
+            {
+              "direction": 1,
+              "field": "reference"
+            }
+          ],
+          "unique": true,
+          "name": "reference_1"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "index exists on bannedwebhooks",
+        "source": {
+          "kind": "listIndexes",
+          "collection": "bannedwebhooks"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "key",
+              "op": "$eq",
+              "value": {
+                "reference": 1
+              }
+            },
+            {
+              "kind": "field",
+              "field": "unique",
+              "op": "$eq",
+              "value": true
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  },
+  {
+    "id": "index.seenwebhooks.create(reference:1)",
+    "label": "Create index on seenwebhooks (reference:1)",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "index does not already exist on seenwebhooks",
+        "source": {
+          "kind": "listIndexes",
+          "collection": "seenwebhooks"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "key",
+          "op": "$eq",
+          "value": {
+            "reference": 1
+          }
+        },
+        "expect": "notExists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index on seenwebhooks",
+        "command": {
+          "kind": "createIndex",
+          "collection": "seenwebhooks",
+          "keys": [
+            {
+              "direction": 1,
+              "field": "reference"
+            }
+          ],
+          "unique": true,
+          "name": "reference_1"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "index exists on seenwebhooks",
+        "source": {
+          "kind": "listIndexes",
+          "collection": "seenwebhooks"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "key",
+              "op": "$eq",
+              "value": {
+                "reference": 1
+              }
+            },
+            {
+              "kind": "field",
+              "field": "unique",
+              "op": "$eq",
+              "value": true
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  },
+  {
+    "id": "validator.bannedips.update",
+    "label": "Update validator on bannedips (added: reference)",
+    "operationClass": "destructive",
+    "precheck": [
+      {
+        "description": "collection bannedips exists",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "bannedips"
+        },
+        "expect": "exists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "modify bannedips",
+        "command": {
+          "kind": "collMod",
+          "collection": "bannedips",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "expires": {
+                  "bsonType": "date"
+                },
+                "reason": {
+                  "bsonType": "string"
+                },
+                "reference": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "expires",
+                "reason",
+                "reference"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "validator applied on bannedips",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "name",
+              "op": "$eq",
+              "value": "bannedips"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationLevel",
+              "op": "$eq",
+              "value": "strict"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationAction",
+              "op": "$eq",
+              "value": "error"
+            },
+            {
+              "kind": "field",
+              "field": "options.validator.$jsonSchema",
+              "op": "$eq",
+              "value": {
+                "additionalProperties": false,
+                "bsonType": "object",
+                "properties": {
+                  "_id": {
+                    "bsonType": "objectId"
+                  },
+                  "expires": {
+                    "bsonType": "date"
+                  },
+                  "reason": {
+                    "bsonType": "string"
+                  },
+                  "reference": {
+                    "bsonType": "string"
+                  }
+                },
+                "required": [
+                  "_id",
+                  "expires",
+                  "reason",
+                  "reference"
+                ]
+              }
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  },
+  {
+    "id": "validator.bannedwebhooks.update",
+    "label": "Update validator on bannedwebhooks (added: reference)",
+    "operationClass": "destructive",
+    "precheck": [
+      {
+        "description": "collection bannedwebhooks exists",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "bannedwebhooks"
+        },
+        "expect": "exists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "modify bannedwebhooks",
+        "command": {
+          "kind": "collMod",
+          "collection": "bannedwebhooks",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "reason": {
+                  "bsonType": "string"
+                },
+                "reference": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "reason",
+                "reference"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "validator applied on bannedwebhooks",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "name",
+              "op": "$eq",
+              "value": "bannedwebhooks"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationLevel",
+              "op": "$eq",
+              "value": "strict"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationAction",
+              "op": "$eq",
+              "value": "error"
+            },
+            {
+              "kind": "field",
+              "field": "options.validator.$jsonSchema",
+              "op": "$eq",
+              "value": {
+                "additionalProperties": false,
+                "bsonType": "object",
+                "properties": {
+                  "_id": {
+                    "bsonType": "objectId"
+                  },
+                  "reason": {
+                    "bsonType": "string"
+                  },
+                  "reference": {
+                    "bsonType": "string"
+                  }
+                },
+                "required": [
+                  "_id",
+                  "reason",
+                  "reference"
+                ]
+              }
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  },
+  {
+    "id": "validator.seenwebhooks.update",
+    "label": "Update validator on seenwebhooks (added: reference)",
+    "operationClass": "destructive",
+    "precheck": [
+      {
+        "description": "collection seenwebhooks exists",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "seenwebhooks"
+        },
+        "expect": "exists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "modify seenwebhooks",
+        "command": {
+          "kind": "collMod",
+          "collection": "seenwebhooks",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "reference": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "reference"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "validator applied on seenwebhooks",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "name",
+              "op": "$eq",
+              "value": "seenwebhooks"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationLevel",
+              "op": "$eq",
+              "value": "strict"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationAction",
+              "op": "$eq",
+              "value": "error"
+            },
+            {
+              "kind": "field",
+              "field": "options.validator.$jsonSchema",
+              "op": "$eq",
+              "value": {
+                "additionalProperties": false,
+                "bsonType": "object",
+                "properties": {
+                  "_id": {
+                    "bsonType": "objectId"
+                  },
+                  "reference": {
+                    "bsonType": "string"
+                  }
+                },
+                "required": [
+                  "_id",
+                  "reference"
+                ]
+              }
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  }
+]
