@@ -92,7 +92,7 @@ async function clientSafe(
   if (currentSafeRobin === axiosClients.length) currentSafeRobin = 0;
 
   if (
-    parseInt(await redis.get(`clientAbuse:${instance[1]}`) ?? "0") >=
+    parseInt((await redis.get(`clientAbuse:${instance[1]}`)) ?? "0") >=
     config.abuseThreshold
   )
     return clientSafe(currentSafeRobin);
@@ -264,7 +264,7 @@ async function getWebhookBanInfo(id: string): Promise<string | undefined> {
     await redis.set(`webhookBan:${id}`, ban.reason, "EX", 24 * 60 * 60);
     return ban.reason;
   } else {
-    return undefined
+    return undefined;
   }
 }
 
@@ -336,7 +336,7 @@ app.use(Express.json());
 const webhookPostRatelimit = slowDown({
   windowMs: 2000,
   delayAfter: 5,
-  delayMs: 1000,
+  delayMs: () => 1000,
   maxDelayMs: 30000,
 
   keyGenerator: (req, res) => {
@@ -353,7 +353,7 @@ const webhookPostRatelimit = slowDown({
 const webhookQueuePostRatelimit = slowDown({
   windowMs: 1000,
   delayAfter: 10,
-  delayMs: 1000,
+  delayMs: () => 1000,
   maxDelayMs: 30000,
 
   keyGenerator: (req, res) => {
@@ -370,7 +370,7 @@ const webhookQueuePostRatelimit = slowDown({
 const webhookInvalidPostRatelimit = slowDown({
   windowMs: 30000,
   delayAfter: 3,
-  delayMs: 1000,
+  delayMs: () => 1000,
   maxDelayMs: 30000,
 
   keyGenerator: (req, res) => {
@@ -395,7 +395,7 @@ const webhookInvalidPostRatelimit = slowDown({
 const unknownEndpointRatelimit = slowDown({
   windowMs: 10000,
   delayAfter: 10,
-  delayMs: 500,
+  delayMs: () => 500,
   maxDelayMs: 30000,
 
   store: new RedisStore({
@@ -408,7 +408,7 @@ const unknownEndpointRatelimit = slowDown({
 const statsEndpointRatelimit = slowDown({
   windowMs: 5000,
   delayAfter: 1,
-  delayMs: 500,
+  delayMs: () => 500,
   maxDelayMs: 30000,
 
   store: new RedisStore({
@@ -431,7 +431,14 @@ app.get("/stats", statsEndpointRatelimit, async (req, res) => {
   return res.json({
     requests: data[0],
     webhooks: data[1][0].total,
-    // version: VERSION,
+    github_sha:
+      process.env.NODE_ENV === "development"
+        ? "rawruwu"
+        : process.env.GITHUB_SHA,
+    version:
+      process.env.NODE_ENV === "development"
+        ? "0.0.0 InDev"
+        : process.env.VERSION!,
   });
 });
 
@@ -484,7 +491,7 @@ async function preRequestChecks(req: Request<{ id: string }>, res: Response) {
   // if we know this webhook is already ratelimited, don't hit discord but reject the request instead
   const ratelimit = parseInt(
     // @ts-expect-error
-    (await redis.get(`webhookRatelimit:${req.params.id}`)),
+    await redis.get(`webhookRatelimit:${req.params.id}`),
   );
   if (ratelimit === 0) {
     // get the timestamp for reset
@@ -914,8 +921,8 @@ app.listen(config.port, async () => {
 
   const mqInstance = getRabbitMq();
   if (!mqInstance) {
-    error("No RabbitMQ Instance was initalized.")
-    return process.exit()
+    error("No RabbitMQ Instance was initalized.");
+    return process.exit();
   }
 
   rabbitMq = mqInstance;
@@ -929,5 +936,10 @@ app.listen(config.port, async () => {
     requestsHandled = 0;
   }, 60000);
 
-  log("Up and running. Version:", "meow");
+  log(
+    "Up and running. Version:",
+    process.env.NODE_ENV === "development"
+      ? "0.0.0 InDev"
+      : process.env.VERSION!,
+  );
 });
