@@ -1,17 +1,30 @@
-FROM node:20-bullseye
+# -----------------------------------
+FROM oven/bun:1-debian AS base
+WORKDIR /usr/src/app
 
 RUN apt-get update && apt-get install -y \
-  libssl1.1 openssl ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+    curl \
+    ca-certificates \
+    openssl \
+    libssl-dev \
+    && openssl version \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /temp/prod
 
-WORKDIR /app
+COPY package.json bun.lock /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile
+# -----------------------------------
+FROM base AS release
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
-
+COPY --from=base /temp/prod/node_modules ./node_modules
 COPY . .
 
-RUN yarn build
+ARG VERSION
+ARG GIT_SHA
 
-EXPOSE 4000
-CMD ["node", "dist"]
+ENV VERSION=$VERSION
+ENV GITHUB_SHA=$GIT_SHA
+ENV NODE_ENV=production
+
+CMD [ "bun", "run", "src/index.ts" ]
+# -----------------------------------
