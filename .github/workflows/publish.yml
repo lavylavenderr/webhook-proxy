@@ -1,0 +1,47 @@
+name: Publish Image
+on:
+  push:
+    branches: ['master']
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v7
+
+      - name: Extract Version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Calculate short SHA
+        run: |
+          id=$(echo ${{github.sha}} | cut -c 1-7)
+          echo "::set-output name=id::$id"
+        id: calc_sha
+
+      - name: Login to Package Registry
+        run: echo "${{ secrets.LAVENDER_REGISTRY_TOKEN }}" | docker login registry.stackowoflow.com -u alexander --password-stdin
+
+      - name: Set Image Tags
+        id: tag
+        run: |
+          BASE_REGISTRY="registry.stackowoflow.com/canary/webhook-proxy"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          BUILD_NUM="${{ github.run_number }}"
+          
+          echo "tag_latest=${BASE_REGISTRY}:latest" >> $GITHUB_OUTPUT
+          echo "tag_sha=${BASE_REGISTRY}:sha-${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "tag_build=${BASE_REGISTRY}:build-${BUILD_NUM}" >> $GITHUB_OUTPUT
+
+      - name: Build and Push
+        run: |
+          docker build \
+            --build-arg VERSION=${{ steps.version.outputs.VERSION }} \
+            --build-arg GIT_SHA=${{ steps.calc_sha.outputs.id }} \
+            -t ${{ steps.tag.outputs.tag_latest }} \
+            -t ${{ steps.tag.outputs.tag_sha }} \
+            -t ${{ steps.tag.outputs.tag_build }} .
+
+          docker push ${{ steps.tag.outputs.tag_latest }}
+          docker push ${{ steps.tag.outputs.tag_sha }}
+          docker push ${{ steps.tag.outputs.tag_build }}
