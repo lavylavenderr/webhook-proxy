@@ -118,9 +118,9 @@ async function banWebhook(id: string, reason: string) {
   // setting it in cache first will prevent this since it will read the cached version first,
   // realise that they're banned, and stop the request there.
   await redis.set(`webhookBan:${id}`, reason, "EX", 24 * 60 * 60);
-  await db.orm.bannedwebhooks.where({ id: id }).upsert({
+  await db.orm.bannedwebhooks.where({ reference: id }).upsert({
     create: {
-      id: id,
+      reference: id,
       reason,
     },
     update: {
@@ -145,9 +145,9 @@ async function banIp(ip: string, reason: string) {
     "PXAT",
     expiry.getTime(),
   );
-  await db.orm.bannedips.where({ id: ip }).upsert({
+  await db.orm.bannedips.where({ reference: ip }).upsert({
     create: {
-      id: ip,
+      reference: ip,
       reason,
       expires: expiry,
     },
@@ -259,10 +259,10 @@ async function getWebhookBanInfo(id: string): Promise<string | undefined> {
     return data;
   }
 
-  const ban = await db.orm.bannedwebhooks.where({ id: id }).first();
+  const ban = await db.orm.bannedwebhooks.where({ reference: id }).first();
   if (ban) {
     await redis.set(`webhookBan:${id}`, ban.reason, "EX", 24 * 60 * 60);
-  return ban.reason;
+    return ban.reason;
   } else {
     return undefined
   }
@@ -290,13 +290,13 @@ async function getIPBanInfo(
   }
 
   const ban = await db.orm.bannedips
-    .where({ id: ip })
+    .where({ reference: ip })
     .select("reason", "expires")
     .first();
 
   if (ban) {
     if (ban.expires.getTime() <= Date.now()) {
-      await db.orm.bannedips.where({ id: ip }).delete();
+      await db.orm.bannedips.where({ reference: ip }).delete();
       await redis.del(`ipBan:${hash}`);
       return undefined;
     }
@@ -475,7 +475,7 @@ async function preRequestChecks(req: Request<{ id: string }>, res: Response) {
     res.status(403).json({
       proxy: true,
       message:
-        "This webhook has been blocked. Please contact @lewisakura on the DevForum.",
+        "This webhook has been blocked. Please contact @lavendicated on Discord.",
       reason: banInfo,
     });
     return false;
@@ -483,7 +483,8 @@ async function preRequestChecks(req: Request<{ id: string }>, res: Response) {
 
   // if we know this webhook is already ratelimited, don't hit discord but reject the request instead
   const ratelimit = parseInt(
-    (await redis.get(`webhookRatelimit:${req.params.id}`)) ?? "0",
+    // @ts-expect-error
+    (await redis.get(`webhookRatelimit:${req.params.id}`)),
   );
   if (ratelimit === 0) {
     // get the timestamp for reset
@@ -507,7 +508,7 @@ async function preRequestChecks(req: Request<{ id: string }>, res: Response) {
     await redis.set(
       `webhooksSeen:${req.params.id}`,
       (!!(await db.orm.seenwebhooks
-        .where({ id: String(req.params.id) })
+        .where({ reference: req.params.id })
         .first())).toString(),
       "EX",
       600,
@@ -541,9 +542,9 @@ async function postRequestChecks(
     response.status === 404 &&
     response.data.code === 10015 /* webhook not found */
   ) {
-    await db.orm.bannedwebhooks.where({ id: String(req.params.id) }).upsert({
+    await db.orm.bannedwebhooks.where({ reference: req.params.id }).upsert({
       create: {
-        id: String(req.params.id),
+        reference: req.params.id,
         reason: "[Automated] Webhook does not exist.",
       },
       update: {
@@ -551,7 +552,7 @@ async function postRequestChecks(
       },
     });
 
-    await trackNonExistentWebhook(req.ip ?? "127.0.0.1", clientAddress);
+    await trackNonExistentWebhook(req.clientIp, clientAddress);
 
     res.status(404).json({
       proxy: true,
@@ -566,9 +567,9 @@ async function postRequestChecks(
     (await redis.get(`webhooksSeen:${req.params.id}`)) === "false"
   ) {
     await redis.set(`webhooksSeen:${req.params.id}`, "true", "EX", 600, "NX");
-    await db.orm.seenwebhooks.where({ id: String(req.params.id) }).upsert({
+    await db.orm.seenwebhooks.where({ reference: req.params.id }).upsert({
       update: {},
-      create: { id: String(req.params.id) },
+      create: { reference: String(req.params.id) },
     });
   }
 

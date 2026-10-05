@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'547748b2eab62d30e0c18f8e61ab589823a873a82c6c54253e73f486bed22733'>;
+  StorageHashBase<'d732532784aeac5984a1193308adaf1464cad9c3ac1fd5a8555d0192dde129bb'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
@@ -30,17 +30,17 @@ export type FieldOutputTypes = {
     readonly BannedIP: {
       readonly _id: CodecTypes['mongo/objectId@1']['output'];
       readonly expires: CodecTypes['mongo/date@1']['output'];
-      readonly id: CodecTypes['mongo/string@1']['output'];
       readonly reason: CodecTypes['mongo/string@1']['output'];
+      readonly reference: CodecTypes['mongo/string@1']['output'];
     };
     readonly BannedWebhook: {
       readonly _id: CodecTypes['mongo/objectId@1']['output'];
-      readonly id: CodecTypes['mongo/string@1']['output'];
       readonly reason: CodecTypes['mongo/string@1']['output'];
+      readonly reference: CodecTypes['mongo/string@1']['output'];
     };
     readonly WebhooksSeen: {
       readonly _id: CodecTypes['mongo/objectId@1']['output'];
-      readonly id: CodecTypes['mongo/string@1']['output'];
+      readonly reference: CodecTypes['mongo/string@1']['output'];
     };
   };
 };
@@ -49,17 +49,17 @@ export type FieldInputTypes = {
     readonly BannedIP: {
       readonly _id: CodecTypes['mongo/objectId@1']['input'];
       readonly expires: CodecTypes['mongo/date@1']['input'];
-      readonly id: CodecTypes['mongo/string@1']['input'];
       readonly reason: CodecTypes['mongo/string@1']['input'];
+      readonly reference: CodecTypes['mongo/string@1']['input'];
     };
     readonly BannedWebhook: {
       readonly _id: CodecTypes['mongo/objectId@1']['input'];
-      readonly id: CodecTypes['mongo/string@1']['input'];
       readonly reason: CodecTypes['mongo/string@1']['input'];
+      readonly reference: CodecTypes['mongo/string@1']['input'];
     };
     readonly WebhooksSeen: {
       readonly _id: CodecTypes['mongo/objectId@1']['input'];
-      readonly id: CodecTypes['mongo/string@1']['input'];
+      readonly reference: CodecTypes['mongo/string@1']['input'];
     };
   };
 };
@@ -68,19 +68,19 @@ export namespace Models {
   export type unbound_BannedIP = {
     _id: CodecTypes['mongo/objectId@1']['output'];
     expires: CodecTypes['mongo/date@1']['output'];
-    id: CodecTypes['mongo/string@1']['output'];
     reason: CodecTypes['mongo/string@1']['output'];
+    reference: CodecTypes['mongo/string@1']['output'];
     readonly [RelationKeys]?: never;
   };
   export type unbound_BannedWebhook = {
     _id: CodecTypes['mongo/objectId@1']['output'];
-    id: CodecTypes['mongo/string@1']['output'];
     reason: CodecTypes['mongo/string@1']['output'];
+    reference: CodecTypes['mongo/string@1']['output'];
     readonly [RelationKeys]?: never;
   };
   export type unbound_WebhooksSeen = {
     _id: CodecTypes['mongo/objectId@1']['output'];
-    id: CodecTypes['mongo/string@1']['output'];
+    reference: CodecTypes['mongo/string@1']['output'];
     readonly [RelationKeys]?: never;
   };
 }
@@ -106,7 +106,7 @@ type ContractBase = Omit<
             readonly bannedips: {
               readonly indexes: readonly [
                 {
-                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'id' }];
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'reference' }];
                   readonly kind: 'mongo-index';
                   readonly unique: true;
                 },
@@ -119,10 +119,10 @@ type ContractBase = Omit<
                   readonly properties: {
                     readonly _id: { readonly bsonType: 'objectId' };
                     readonly expires: { readonly bsonType: 'date' };
-                    readonly id: { readonly bsonType: 'string' };
                     readonly reason: { readonly bsonType: 'string' };
+                    readonly reference: { readonly bsonType: 'string' };
                   };
-                  readonly required: readonly ['_id', 'expires', 'id', 'reason'];
+                  readonly required: readonly ['_id', 'expires', 'reason', 'reference'];
                 };
                 readonly kind: 'mongo-validator';
                 readonly validationAction: 'error';
@@ -132,7 +132,7 @@ type ContractBase = Omit<
             readonly bannedwebhooks: {
               readonly indexes: readonly [
                 {
-                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'id' }];
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'reference' }];
                   readonly kind: 'mongo-index';
                   readonly unique: true;
                 },
@@ -144,10 +144,10 @@ type ContractBase = Omit<
                   readonly bsonType: 'object';
                   readonly properties: {
                     readonly _id: { readonly bsonType: 'objectId' };
-                    readonly id: { readonly bsonType: 'string' };
                     readonly reason: { readonly bsonType: 'string' };
+                    readonly reference: { readonly bsonType: 'string' };
                   };
-                  readonly required: readonly ['_id', 'id', 'reason'];
+                  readonly required: readonly ['_id', 'reason', 'reference'];
                 };
                 readonly kind: 'mongo-validator';
                 readonly validationAction: 'error';
@@ -157,7 +157,7 @@ type ContractBase = Omit<
             readonly seenwebhooks: {
               readonly indexes: readonly [
                 {
-                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'id' }];
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'reference' }];
                   readonly kind: 'mongo-index';
                   readonly unique: true;
                 },
@@ -169,9 +169,9 @@ type ContractBase = Omit<
                   readonly bsonType: 'object';
                   readonly properties: {
                     readonly _id: { readonly bsonType: 'objectId' };
-                    readonly id: { readonly bsonType: 'string' };
+                    readonly reference: { readonly bsonType: 'string' };
                   };
-                  readonly required: readonly ['_id', 'id'];
+                  readonly required: readonly ['_id', 'reference'];
                 };
                 readonly kind: 'mongo-validator';
                 readonly validationAction: 'error';
@@ -216,11 +216,11 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
               };
-              readonly id: {
+              readonly reason: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
-              readonly reason: {
+              readonly reference: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
@@ -234,11 +234,11 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
               };
-              readonly id: {
+              readonly reason: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
-              readonly reason: {
+              readonly reference: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
@@ -252,7 +252,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
               };
-              readonly id: {
+              readonly reference: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };

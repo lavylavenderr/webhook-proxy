@@ -37,14 +37,14 @@
                   "kind": "scalar"
                 }
               },
-              "id": {
+              "reason": {
                 "nullable": false,
                 "type": {
                   "codecId": "mongo/string@1",
                   "kind": "scalar"
                 }
               },
-              "reason": {
+              "reference": {
                 "nullable": false,
                 "type": {
                   "codecId": "mongo/string@1",
@@ -66,14 +66,14 @@
                   "kind": "scalar"
                 }
               },
-              "id": {
+              "reason": {
                 "nullable": false,
                 "type": {
                   "codecId": "mongo/string@1",
                   "kind": "scalar"
                 }
               },
-              "reason": {
+              "reference": {
                 "nullable": false,
                 "type": {
                   "codecId": "mongo/string@1",
@@ -95,7 +95,7 @@
                   "kind": "scalar"
                 }
               },
-              "id": {
+              "reference": {
                 "nullable": false,
                 "type": {
                   "codecId": "mongo/string@1",
@@ -123,7 +123,7 @@
                   "keys": [
                     {
                       "direction": 1,
-                      "field": "id"
+                      "field": "reference"
                     }
                   ],
                   "kind": "mongo-index",
@@ -142,18 +142,18 @@
                     "expires": {
                       "bsonType": "date"
                     },
-                    "id": {
+                    "reason": {
                       "bsonType": "string"
                     },
-                    "reason": {
+                    "reference": {
                       "bsonType": "string"
                     }
                   },
                   "required": [
                     "_id",
                     "expires",
-                    "id",
-                    "reason"
+                    "reason",
+                    "reference"
                   ]
                 },
                 "kind": "mongo-validator",
@@ -167,7 +167,7 @@
                   "keys": [
                     {
                       "direction": 1,
-                      "field": "id"
+                      "field": "reference"
                     }
                   ],
                   "kind": "mongo-index",
@@ -183,17 +183,17 @@
                     "_id": {
                       "bsonType": "objectId"
                     },
-                    "id": {
+                    "reason": {
                       "bsonType": "string"
                     },
-                    "reason": {
+                    "reference": {
                       "bsonType": "string"
                     }
                   },
                   "required": [
                     "_id",
-                    "id",
-                    "reason"
+                    "reason",
+                    "reference"
                   ]
                 },
                 "kind": "mongo-validator",
@@ -207,7 +207,7 @@
                   "keys": [
                     {
                       "direction": 1,
-                      "field": "id"
+                      "field": "reference"
                     }
                   ],
                   "kind": "mongo-index",
@@ -223,13 +223,13 @@
                     "_id": {
                       "bsonType": "objectId"
                     },
-                    "id": {
+                    "reference": {
                       "bsonType": "string"
                     }
                   },
                   "required": [
                     "_id",
-                    "id"
+                    "reference"
                   ]
                 },
                 "kind": "mongo-validator",
@@ -243,7 +243,7 @@
         "kind": "mongo-database"
       }
     },
-    "storageHash": "547748b2eab62d30e0c18f8e61ab589823a873a82c6c54253e73f486bed22733"
+    "storageHash": "d732532784aeac5984a1193308adaf1464cad9c3ac1fd5a8555d0192dde129bb"
   },
   "capabilities": {},
   "extensions": {},

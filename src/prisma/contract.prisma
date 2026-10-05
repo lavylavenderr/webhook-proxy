@@ -1,16 +1,15 @@
 // use prisma-8
 model BannedWebhook {
-  _id    ObjectId @id @map("_id")
-  id     String   @unique
-
+  id    ObjectId @id @map("_id")
+  reference     String   @unique
   reason String
 
   @@map("bannedwebhooks")
 }
 
 model BannedIP {
-  _id     ObjectId @id @map("_id")
-  id      String   @unique
+  id     ObjectId @id @map("_id")
+  reference      String   @unique
 
   reason  String
   expires Date
@@ -20,7 +19,7 @@ model BannedIP {
 
 model WebhooksSeen {
   _id ObjectId @id @map("_id")
-  id  String   @unique
+  reference  String   @unique
 
   @@map("seenwebhooks")
 }
