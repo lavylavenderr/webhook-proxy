@@ -20,8 +20,8 @@ The config file referenced by the original project has not been changed, but can
 
 - Docker (and Docker Compose)
 - A MongoDB instance (self-hosted or Atlas)
-- A server hosting your `config.json` (e.g. copyparty) 
-    > I should mention that this is not required, however given you'd have RabbitMQ credentials, I highly advise locking it behind some sort of authentication. Feel free to update `src/lib/config.ts` with how you desire to fetch your config as that is where it is handled.
+- A server hosting your `config.json` (e.g. copyparty) behind authentication,
+    > I should mention that this is not require (at least the authentication part), however given you'd have RabbitMQ credentials, I highly advise locking it behind some sort of authentication. Feel free to update `src/lib/config.ts` with how you desire to fetch your config as that is where it is handled.
 
 ## Environment Variables
 
