@@ -29,7 +29,7 @@ The config file referenced by the original project has not been changed, but can
 | --- | --- | --- |
 | `DATABASE_URL` | MongoDB connection string used by Prisma | `mongodb://user:pass@mongo:27017/webhook-proxy` |
 | `CONFIG_REMOTE` | URL to your remote server (minus "/config.json") | `http://copyparty.hyacinth.ca/configs` |
-| `CONFIG_AUTH` | basic Auth Password | `RawrUwuOwO` |
+| `CONFIG_AUTH` | Basic Auth Password | `RawrUwuOwO` |
 
 > Ensure you adjust the above to actually be their respective values. **There is no username variable because Copyparty only checks passwords, not usernames when authenticating people.**
 
