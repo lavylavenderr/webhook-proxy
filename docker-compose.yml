@@ -15,22 +15,23 @@ services:
   dragonfly:
     container_name: webhook-proxy-cache
     image: ghcr.io/dragonflydb/dragonfly:latest
-    networks:
-      - internal
+    restart: unless-stopped
     ulimits:
       memlock: -1
     volumes:
       - dragonflydata:/data
+    networks:
+      - internal
     healthcheck:
-      test: ["CMD", "redis-cli", "PING"]
+      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
       interval: 5s
       timeout: 3s
       retries: 5
-      
+
 networks:
-  internal:
-    external: false
   traefik:
     external: true
+  internal:
+
 volumes:
   dragonflydata:
