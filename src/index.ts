@@ -321,7 +321,11 @@ async function getIPBanInfo(
 
 app.set("trust proxy", config.trustProxy);
 app.use((req, res, next) => {
-  req.clientIp = req.ip || req.socket.remoteAddress || "127.0.0.1";
+  req.clientIp =
+    String(req.headers["CF-Connecting-IP"]) ||
+    req.ip ||
+    req.socket.remoteAddress ||
+    "127.0.0.1";
   next();
 });
 app.use(
