@@ -17,7 +17,7 @@ interface ApplicationConfig {
 
 export async function fetchApplicationConfig(): Promise<ApplicationConfig> {
     // feel free to change and modify as you see fit :)
-    const { data } = await axios.get<ApplicationConfig>(Bun.env.CONFIG_REMOTE + Bun.env.NODE_ENV === "development" ? "/webhook-dev.json" : "/webhook.json", {
+    const { data } = await axios.get<ApplicationConfig>(`${Bun.env.CONFIG_REMOTE}${Bun.env.NODE_ENV === "development" ? "/webhook-dev.json" : "/webhook.json"}`, {
         auth: {
             username: "ilovecopypartycauseicanputanythinghere",
             password: Bun.env.CONFIG_AUTH
