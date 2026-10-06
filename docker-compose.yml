@@ -3,6 +3,8 @@ services:
     container_name: webhook-proxy
     image: registry.stackowoflow.com/canary/webhook-proxy:latest
     restart: unless-stopped
+    networks:
+      - traef
     depends_on:
       dragonfly:
         condition: service_healthy
@@ -11,7 +13,7 @@ services:
 
   dragonfly:
     container_name: webhook-proxy-cache
-    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    image: ghcr.io/dragonflydb/dragonfly:latest
     ulimits:
       memlock: -1
     volumes:
@@ -22,5 +24,10 @@ services:
       timeout: 3s
       retries: 5
       
+networks:
+  internal:
+    external: false
+  traefik:
+    external: true
 volumes:
   dragonflydata:
