@@ -4,7 +4,8 @@ services:
     image: registry.stackowoflow.com/canary/webhook-proxy:latest
     restart: unless-stopped
     networks:
-      - traef
+      - traefik
+      - internal
     depends_on:
       dragonfly:
         condition: service_healthy
@@ -14,6 +15,8 @@ services:
   dragonfly:
     container_name: webhook-proxy-cache
     image: ghcr.io/dragonflydb/dragonfly:latest
+    networks:
+      - internal
     ulimits:
       memlock: -1
     volumes:
