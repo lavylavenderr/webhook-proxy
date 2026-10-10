@@ -28,7 +28,7 @@ jobs:
           docker build \
             --build-arg GITHUB_SHA=${{ github.sha }} \
             -t ${{ steps.tag.outputs.tag_latest }} \
-            -t ${{ steps.tag.outputs.tag_sha }} \
+            -t ${{ steps.tag.outputs.tag_sha }} .
 
           docker push ${{ steps.tag.outputs.tag_latest }}
           docker push ${{ steps.tag.outputs.tag_sha }}
