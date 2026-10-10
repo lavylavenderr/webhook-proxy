@@ -19,11 +19,9 @@ FROM base AS release
 COPY --from=base /temp/prod/node_modules ./node_modules
 COPY . .
 
-ARG VERSION
-ARG GIT_SHA
+ARG GITHUB_SHA
 
-ENV VERSION=$VERSION
-ENV GITHUB_SHA=$GIT_SHA
+ENV GITHUB_SHA=$GITHUB_SHA
 ENV NODE_ENV=production
 
 CMD [ "bun", "run", "src/index.ts" ]
