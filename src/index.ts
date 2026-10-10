@@ -431,14 +431,10 @@ app.get("/stats", statsEndpointRatelimit, async (req, res) => {
   return res.json({
     requests: data[0],
     webhooks: data[1][0].total,
-    github_sha:
+    version:
       process.env.NODE_ENV === "development"
         ? "rawruwu"
         : process.env.GITHUB_SHA,
-    version:
-      process.env.NODE_ENV === "development"
-        ? "0.0.0 InDev"
-        : process.env.VERSION!,
   });
 });
 
@@ -663,8 +659,7 @@ app.post(
     }
 
     res.removeHeader("Transfer-Encoding"); // the proxy changes how this is encoded, so it's wrong to actually include this header even if Discord does
-
-    res.setHeader("Via", "1.0 WebhookProxy");
+    res.setHeader("Via", "2.0 WebhookProxy");
 
     return res.status(response.status).json(response.data);
   },
@@ -748,7 +743,7 @@ app.patch(
     }
 
     res.removeHeader("Transfer-Encoding"); // the proxy changes how this is encoded, so it's wrong to actually include this header even if Discord does
-    res.setHeader("Via", "1.0 WebhookProxy");
+    res.setHeader("Via", "2.0 WebhookProxy");
 
     return res.status(response.status).json(response.data);
   },
@@ -863,7 +858,7 @@ app.post(
       return res.status(403).json({
         proxy: true,
         message:
-          "This webhook has been blocked. Please contact @lewisakura on the DevForum.",
+          "This webhook has been blocked. Please contact @lavendicated on Discord.",
         reason: reason,
       });
     }
@@ -939,7 +934,7 @@ app.listen(config.port, async () => {
   log(
     "Up and running. Version:",
     process.env.NODE_ENV === "development"
-      ? "0.0.0 InDev"
-      : process.env.VERSION!,
+        ? "rawruwu"
+        : process.env.GITHUB_SHA,
   );
 });

@@ -70,7 +70,7 @@ export const rabbitReady = (async () => {
             data.body,
             {
               headers: {
-                "User-Agent": "WebhookProxy-QueueProcessor/1.0 (https://github.com/lewisakura/webhook-proxy)",
+                "User-Agent": "WebhookProxy-QueueProcessor/2.0 (https://github.com/lavylavenderr/webhook-proxy)",
                 "Content-Type": "application/json",
               },
             }
